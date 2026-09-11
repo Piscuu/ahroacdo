@@ -264,4 +264,3 @@ elif st.session_state.estado == "perdio":
         nuevo_juego()
 
         st.rerun()
-```
