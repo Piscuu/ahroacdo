@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import random
 
@@ -35,8 +36,87 @@ categorias = {
 }
 
 
+# Dibujo del ahorcado
+def dibujo_ahorcado(intentos):
+
+    dibujos = [
+        """
+          +---+
+          |   |
+          O   |
+         /|\\  |
+         / \\  |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+          O   |
+         /|\\  |
+         /    |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+          O   |
+         /|\\  |
+              |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+          O   |
+         /|   |
+              |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+          O   |
+          |   |
+              |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+          O   |
+              |
+              |
+              |
+        =========
+        """,
+
+        """
+          +---+
+          |   |
+              |
+              |
+              |
+              |
+        =========
+        """
+    ]
+
+    return dibujos[intentos]
+
+
 # Crear una nueva partida
 def nuevo_juego():
+
     categoria = st.session_state.categoria
 
     st.session_state.palabra = random.choice(categorias[categoria])
@@ -47,12 +127,15 @@ def nuevo_juego():
 
 # Inicializar el juego
 if "palabra" not in st.session_state:
+
     st.session_state.categoria = "🌎 Países"
+
     nuevo_juego()
 
 
 # Título
 st.title("🎯 Juego del Ahorcado")
+
 
 # Elegir categoría
 categoria = st.selectbox(
@@ -61,16 +144,24 @@ categoria = st.selectbox(
 )
 
 
-# Si cambia la categoría, comienza una nueva partida
+# Si cambia la categoría
 if categoria != st.session_state.categoria:
+
     st.session_state.categoria = categoria
+
     nuevo_juego()
+
     st.rerun()
 
 
-# Obtener datos del juego
+# Datos del juego
 palabra = st.session_state.palabra
 letras = st.session_state.letras
+intentos = st.session_state.intentos
+
+
+# Mostrar dibujo
+st.code(dibujo_ahorcado(intentos))
 
 
 # Mostrar palabra
@@ -86,10 +177,10 @@ for letra in palabra:
 
 st.subheader(mostrar)
 
-# Mostrar intentos
-st.write("❤️ Intentos restantes:", st.session_state.intentos)
 
-# Mostrar letras usadas
+# Mostrar información
+st.write("❤️ Intentos restantes:", intentos)
+
 if letras:
     st.write("🔤 Letras usadas:", ", ".join(letras))
 
@@ -120,21 +211,30 @@ if st.session_state.estado == "jugando":
 
             # Si la letra no está, pierde un intento
             if letra not in palabra:
+
                 st.session_state.intentos -= 1
+
 
             # Comprobar si ganó
             gano = True
 
             for caracter in palabra:
+
                 if caracter not in letras:
+
                     gano = False
 
+
             if gano:
+
                 st.session_state.estado = "gano"
+
 
             # Comprobar si perdió
             elif st.session_state.intentos <= 0:
+
                 st.session_state.estado = "perdio"
+
 
             st.rerun()
 
@@ -147,7 +247,9 @@ elif st.session_state.estado == "gano":
     st.write("La palabra era:", palabra)
 
     if st.button("🔄 Jugar otra vez"):
+
         nuevo_juego()
+
         st.rerun()
 
 
@@ -159,5 +261,8 @@ elif st.session_state.estado == "perdio":
     st.write("La palabra era:", palabra)
 
     if st.button("🔄 Jugar otra vez"):
+
         nuevo_juego()
+
         st.rerun()
+```
