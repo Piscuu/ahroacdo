@@ -1,3 +1,4 @@
+
 import streamlit as st
 import random
 
@@ -135,7 +136,6 @@ if "palabra" not in st.session_state:
 # Título
 st.title("🎯 Juego del Ahorcado")
 
-
 # Elegir categoría
 categoria = st.selectbox(
     "Elegí una categoría:",
@@ -159,8 +159,19 @@ letras = st.session_state.letras
 intentos = st.session_state.intentos
 
 
-# Mostrar dibujo
-st.code(dibujo_ahorcado(intentos))
+# Mostrar dibujo y datos
+col1, col2 = st.columns(2)
+
+with col1:
+    st.code(dibujo_ahorcado(intentos))
+
+with col2:
+    st.write("❤️ Intentos restantes:", intentos)
+
+    if letras:
+        st.write("🔤 Letras usadas:", ", ".join(letras))
+    else:
+        st.write("🔤 Letras usadas: ninguna")
 
 
 # Mostrar palabra
@@ -177,42 +188,32 @@ for letra in palabra:
 st.subheader(mostrar)
 
 
-# Mostrar información
-st.write("❤️ Intentos restantes:", intentos)
+# Teclado
+st.write("### 🔤 Elegí una letra:")
 
-if letras:
-    st.write("🔤 Letras usadas:", ", ".join(letras))
+alfabeto = "abcdefghijklmnñopqrstuvwxyz"
 
+# Crear 9 columnas
+columnas = st.columns(9)
 
-# Juego
-if st.session_state.estado == "jugando":
+for i, letra in enumerate(alfabeto):
 
-    letra = st.text_input(
-        "Ingresá una letra:",
-        max_chars=1
-    )
+    with columnas[i % 9]:
 
-    if st.button("Probar letra"):
+        # Si la letra ya fue usada, desactivar botón
+        desactivado = letra in letras or st.session_state.estado != "jugando"
 
-        letra = letra.lower()
-
-        if not letra.isalpha():
-
-            st.warning("Ingresá una letra válida.")
-
-        elif letra in letras:
-
-            st.warning("Ya usaste esa letra.")
-
-        else:
+        if st.button(
+            letra.upper(),
+            key="letra_" + letra,
+            disabled=desactivado
+        ):
 
             letras.append(letra)
 
-            # Si la letra no está, pierde un intento
+            # Si la letra no está en la palabra
             if letra not in palabra:
-
                 st.session_state.intentos -= 1
-
 
             # Comprobar si ganó
             gano = True
@@ -220,26 +221,20 @@ if st.session_state.estado == "jugando":
             for caracter in palabra:
 
                 if caracter not in letras:
-
                     gano = False
 
-
             if gano:
-
                 st.session_state.estado = "gano"
-
 
             # Comprobar si perdió
             elif st.session_state.intentos <= 0:
-
                 st.session_state.estado = "perdio"
-
 
             st.rerun()
 
 
-# Si ganó
-elif st.session_state.estado == "gano":
+# Victoria
+if st.session_state.estado == "gano":
 
     st.success("🎉 ¡GANASTE!")
 
@@ -252,7 +247,7 @@ elif st.session_state.estado == "gano":
         st.rerun()
 
 
-# Si perdió
+# Derrota
 elif st.session_state.estado == "perdio":
 
     st.error("💀 ¡PERDISTE!")
@@ -264,3 +259,4 @@ elif st.session_state.estado == "perdio":
         nuevo_juego()
 
         st.rerun()
+
